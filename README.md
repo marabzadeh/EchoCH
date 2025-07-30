@@ -21,6 +21,7 @@ EchoCH_test.R includes guides to how to use the method and read the output.
 For the input file we need the list of curated CH mutations with the requested file format. 
 Output files are being produced accordingly. 
 
+```
 library(EchoCH)
 
 # Example usage
@@ -62,6 +63,7 @@ EchoCH::WriteFunction (input.df=PerGeneGrowth.df, path = pathWrite, name = "PerG
 EchoCH::WriteFunction (input.df=PerTreatmentGrowth.df, path = pathWrite, name = "PerTreatmentGrowth" )
 EchoCH::WriteFunction (input.df=NeffList.df, path = pathWrite, name = "NeffList" )
 EchoCH::WriteFunction (input.df=prList.df, path = pathWrite, name = "prList" )
+```
 
 ## Authors
 * **Mona Arabzadeh**
