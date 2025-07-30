@@ -1,9 +1,9 @@
-#' FitnessAnalysis
+#' FitnessLikelihoodAnalysis
 #'
 #' Calculate Fitness likelihood for each variant in each patient
 #'
 #' @param CH.df a data.frame with CH mutations with the following columns::
-#'                                              patient_id, gene, treatment, amino_acid_change,
+#'                                              patient_id (combination of number and letter), gene, treatment, amino_acid_change,
 #'                                              depth, vaf, temporal_order, pre/post_treatment,
 #'                                             days_from_treatment_start_to_sample_collection )
 #' @param Neff_Pr_List Neff_Pr_List[[1]]: a dataframe containing Neff results for each patient;
@@ -11,11 +11,11 @@
 #'
 #' @param SigOrderOfMagnitude_threshold a threshhold on the order of magnitude of the likelihood of the mutation fitness
 #'                                        (in comparison to the lowest likelihood in that patient)
+#' @param time_threshold a threshhold on the timepoints (in days)
 #' @return prList.df : dataframe which reports the fitness of each mutation in each patient and the dynamic (pos/neg/noSelection)
 #' @examples
-#' prList.df <- FitnessAnalysis(CH.df, Neff_Pr_List)
-
-FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold = 5  ){
+#' prList.df <- FitnessLikelihoodAnalysis(CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold = 5, time_threshold = 540 )
+FitnessLikelihoodAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold = 5, time_threshold = 540  ){
 
   Pr.listS <- Neff_Pr_List[[2]]
 
@@ -42,7 +42,7 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
   id.list.org <- Neff_Pr_List[[1]]$id.list.org
   id.list <- Neff_Pr_List[[1]]$id.list
   timePntday <- Neff_Pr_List[[1]]$Time.list
-  timePntmon <- Neff_Pr_List[[1]]$TimeMonth.list
+  timePntmon <- Neff_Pr_List[[1]]$TimeDays.list
 
   mutCount.list <- Neff_Pr_List[[1]]$mutCount.list
 
@@ -50,7 +50,7 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
 
   pr.df.list <- data.frame( Genes=c() , Func=c(), GeneFunc = c(), diff = c(), diffList=c(), diff2 = c(),
                             Pr=c(), Nef=c(), Treatment=c(), PtID=c(), day=c(),
-                            month=c(), mutCount = c(), VAFdir=c(), PtID_org=c(), orderS=c()  )
+                            days=c(), mutCount = c(), VAFdir=c(), PtID_org=c(), orderS=c()  )
 
 
   for (i in 1: length(Pr.listS)){ ## added for
@@ -85,7 +85,7 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
                         rep(mutCount.list[i], length(Pr.listS[[i]])),
                         VAFdir,
                         rep( id.list.org[i], length(Pr.listS[[i]])),
-                        rep( strsplit( id.list[i], "_")[[1]][3], length(Pr.listS[[i]]))
+                        rep( strsplit( id.list[i], "_")[[1]][2], length(Pr.listS[[i]]))
     )
 
 
@@ -93,10 +93,10 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
     colnames(pr.df) <- c("Genes" , "Func", "GeneFunc",
                          "Pr",  "diff", "ground", "diff2",
                          "Nef", "Treatment", "PtID", "day",
-                         "month", "mutCount",
+                         "days", "mutCount",
                          "VAFdir", "PtID_org", "orderS" )
 
-    orderStat <- strsplit( id.list[i], "_")[[1]][3]
+    orderStat <- strsplit( id.list[i], "_")[[1]][2]
     lsGene <- CH.df.tmp2$gene [CH.df.tmp2$temporal_order == 1 ]
     lsvar <- CH.df.tmp2$amino_acid_change [CH.df.tmp2$temporal_order == 1]
 
@@ -129,7 +129,7 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
   prList.df$log10Diff <- log10(as.numeric(prList.df$diff))
 
 
-  prList.df$dynamic <- NULL
+  prList.df$dynamic <- vector ( mode = "character", length = dim(prList.df)[1] )
 
   prList.df$dynamic [ which(prList.df$log10Diff >= SigOrderOfMagnitude_threshold) ] <- "sigPossible"
   prList.df$dynamic [ which(prList.df$log10Diff < SigOrderOfMagnitude_threshold) ] <- "noSelection"
@@ -137,5 +137,8 @@ FitnessAnalysis <- function (CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold 
   prList.df$dynamic [ intersect ( which (prList.df$dynamic == "sigPossible"), which (prList.df$VAFdir >= 0 ) ) ]  <- "Positive"
   prList.df$dynamic [ intersect ( which (prList.df$dynamic == "sigPossible"), which (prList.df$VAFdir <= 0 ) ) ]  <- "Negative"
 
+  prList.df$diff2 <- NULL
+
   return (prList.df)
 }
+

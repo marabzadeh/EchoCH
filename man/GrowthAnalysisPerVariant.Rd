@@ -8,7 +8,7 @@ GrowthAnalysisPerVariant(CH.df)
 }
 \arguments{
 \item{CH.df}{a data.frame with CH mutations with the following columns::
-patient_id, gene, treatment, amino_acid_change,
+patient_id (combination of number and letter), gene, treatment, amino_acid_change,
 depth, vaf, temporal_order, pre/post_treatment,
 days_from_treatment_start_to_sample_collection )}
 }

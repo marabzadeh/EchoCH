@@ -8,7 +8,6 @@
 #' @examples
 #' PerTreatmentGrowth.df <- GrowthAnalysisPerTreatment(PerVarGrowth.df, time_threshold)
 #'
-
 GrowthAnalysisPerTreatment <- function(PerVarGrowth.df, time_threshold){
 
   file.df <- PerVarGrowth.df

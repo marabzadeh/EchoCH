@@ -3,13 +3,12 @@
 #' Growth analysis per-variant per-patient for each time-point
 #'
 #' @param CH.df a data.frame with CH mutations with the following columns::
-#'                                              patient_id, gene, treatment, amino_acid_change,
+#'                                              patient_id (combination of number and letter), gene, treatment, amino_acid_change,
 #'                                              depth, vaf, temporal_order, pre/post_treatment,
 #'                                             days_from_treatment_start_to_sample_collection )
 #' @return PerVarGrowth.df : dataframe reporting the VAF-changes-per-month and other statistics
 #' @examples
 #' PerVarGrowth.df <- GrowthAnalysisPerVariant(CH.df)
-
 GrowthAnalysisPerVariant <- function(CH.df){
 
   CH.df$depth <- as.numeric(CH.df$depth)
@@ -39,8 +38,8 @@ GrowthAnalysisPerVariant <- function(CH.df){
       SecInx <- which(tmp.df$temporal_order == 2 )
 
       tmp.mk <- data.frame(tmp.df$patient_id[firstInx], tmp.df$treatment[firstInx], tmp.df$gene[firstInx],
-                           tmp.df$temporal_order[firstInx], tmp.df$`pre/post_treatment`[firstInx], tmp.df$vaf[firstInx], tmp.df$finalDepth[firstInx],
-                           tmp.df$temporal_order[SecInx], tmp.df$`pre/post_treatment`[SecInx], tmp.df$vaf[SecInx], tmp.df$finalDepth[SecInx],
+                           tmp.df$temporal_order[firstInx], tmp.df$`pre/post_treatment`[firstInx], tmp.df$vaf[firstInx], tmp.df$depth[firstInx],
+                           tmp.df$temporal_order[SecInx], tmp.df$`pre/post_treatment`[SecInx], tmp.df$vaf[SecInx], tmp.df$depth[SecInx],
                            as.numeric(tmp.df$days_from_treatment_start_to_sample_collection[SecInx] ) - as.numeric(tmp.df$days_from_treatment_start_to_sample_collection[firstInx]) )
       colnames(tmp.mk) <- c("id" , "treatment", "GENE",
                             "order_1", "status_1", "finalAF_1", "totalDepth_1",
@@ -49,11 +48,11 @@ GrowthAnalysisPerVariant <- function(CH.df){
       df.new <- rbind(df.new, tmp.mk)
     }else{
 
-      for(j in 1:(max(tmp.df$orderStatus)-1) ) {
-        for (k in (j+1):max(tmp.df$orderStatus)){
+      for(j in 1:(max(tmp.df$temporal_order)-1) ) {
+        for (k in (j+1):max(tmp.df$temporal_order)){
 
-          firstInx <- which(tmp.df$orderStatus == j )
-          SecInx <- which(tmp.df$orderStatus == k )
+          firstInx <- which(tmp.df$temporal_order == j )
+          SecInx <- which(tmp.df$temporal_order == k )
 
           tmp.mk <- data.frame(tmp.df$patient_id[firstInx], tmp.df$treatment[firstInx], tmp.df$gene[firstInx],
                                tmp.df$temporal_order[firstInx], tmp.df$`pre/post_treatment`[firstInx], tmp.df$vaf[firstInx], tmp.df$depth[firstInx],

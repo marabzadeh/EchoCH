@@ -7,7 +7,6 @@
 #' @return   PerGeneGrowth.df : dataframe reporting the VAF-changes-per-month for each gene per treatment and other statistics
 #' @examples
 #' PerGeneGrowth.df <- GrowthAnalysisPerGene(PerVarGrowth.df, time_threshold)
-
 GrowthAnalysisPerGene <- function(PerVarGrowth.df, time_threshold){
 
   file.df <- PerVarGrowth.df

@@ -8,7 +8,6 @@
 #' @return  Fitness likelihood
 #' @examples
 #' Pr <- calcPr(N,n,m)
-
 calcPr <- function(N,n,m) {
 
   n <- ceiling(n*1000)

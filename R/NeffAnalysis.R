@@ -3,23 +3,22 @@
 #' Calculate Neff for each patient with the Fitness likelihood for each variant in that patient
 #'
 #' @param CH.df a data.frame with CH mutations with the following columns::
-#'                                              patient_id, gene, treatment, amino_acid_change,
+#'                                              patient_id (combination of number and letter), gene, treatment, amino_acid_change,
 #'                                              depth, vaf, temporal_order, pre/post_treatment,
 #'                                             days_from_treatment_start_to_sample_collection )
 #' @param mutNumber_threshold a threshhold on the number of mutations for the individual to be considered in the analysis (default 1)
+#' @param time_threshold a threshhold on the timepoints (in days)
 #' @return Neff_Pr_List Neff_Pr_List[[1]]: a dataframe containing Neff results for each patient;
 #'                      Neff_Pr_List[[2]]: a dataframe containing Pr results for each patient
 #' @examples
-#' Neff_Pr_List <- NeffAnalysis(CH.df)
-
-
-NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
+#' Neff_Pr_List <- NeffAnalysis(CH.df, mutNumber_threshold = 1, time_threshold = 540)
+NeffAnalysis <- function (CH.df, mutNumber_threshold = 1, time_threshold = 540){
 
   CH.df$timepoint <- CH.df$days_from_treatment_start_to_sample_collection
 
   CH.df.tmp <- CH.df[CH.df$temporal_order == "1", ]
-  list.ids.grt.three <- names(sort(table(CH.df.tmp$ids), decreasing = TRUE))[
-   which( sort(table(CH.df.tmp$ids), decreasing = TRUE) >= mutNumber_threshold)]
+  list.ids.grt.three <- names(sort(table(CH.df.tmp$patient_id), decreasing = TRUE))[
+   which( sort(table(CH.df.tmp$patient_id), decreasing = TRUE) >= mutNumber_threshold)]
   rm(CH.df.tmp)
 
   CH.df.tmp <- CH.df
@@ -40,7 +39,7 @@ NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
   Time.list <- NULL
   Ter.list <- NULL
   Pr.listS <- NULL
-  TimeMonth.list <- NULL
+  TimeDays.list <- NULL
   order.list <- NULL
   mutCount.list <- NULL
   AF.list.pre <- NULL
@@ -80,7 +79,7 @@ NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
         mvec <- append(mvec, 1- sum(mvec) )
 
 
-        Nef <- calcN(s, mvec, nvec)
+        Nef <- calcNeff(s, mvec, nvec)
         #Nef
 
         Nef.list <- append(Nef.list, Nef)
@@ -88,7 +87,7 @@ NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
         if (  Nef > 0){
           Pr.list <- vector(mode = "integer", length = s)
           for(j in 1:s){
-            Pr.list[j] <- calcP(Nef,mvec[j],nvec[j])
+            Pr.list[j] <- calcPr(Nef,mvec[j],nvec[j])
           }
           cc <- length(Nef.list)
           Pr.listS[[cc]] <- Pr.list
@@ -106,7 +105,7 @@ NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
         AF.list.pre <- append(AF.list.pre, paste(round(nvec,5) ,collapse = ",") )
         AF.list.post <- append(AF.list.post, paste(round(mvec,5), collapse=",") )
 
-        CH.df.tmp2$GeneFunc <- paste(c( CH.df.tmp2$GENE) ,
+        CH.df.tmp2$GeneFunc <- paste(c( CH.df.tmp2$gene) ,
                                        c(CH.df.tmp2$amino_acid_change ),sep ="_" )
 
         GeneFunc.list <- c(CH.df.tmp2$GeneFunc[CH.df.tmp2$temporal_order == "1"], "WT")
@@ -131,25 +130,24 @@ NeffAnalysis <- function (CH.df, mutNumber_threshold = 1){
   AF.list.post <- unlist(AF.list.post)
   GeneFunc <- unlist(GeneFunc)
 
-
-
-  TimeMonth.list <- vector(mode = "character", length = length(Nef.list))
+  TimeDays.list <- vector(mode = "character", length = length(Nef.list))
 
   for (i in 1: length(Nef.list)){
 
-    if(Time.list[i] <= (18*30) ){
-      TimeMonth.list[i] <- "<=18"
-    } else if ( Time.list[i] > (18*30) ) {
-      TimeMonth.list[i] <- ">18"
+    if(Time.list[i] <= time_threshold  ){
+      TimeDays.list[i] <- paste0("<=", time_threshold)
+    } else if ( Time.list[i] > time_threshold ) {
+      TimeDays.list[i] <- paste0(">",time_threshold)
     }
 
   }
 
 
   df.Neff <- data.frame(Nef.list, Time.list, Ter.list, id.list, id.list.org, order.list,
-                        TimeMonth.list,
+                        TimeDays.list,
                         mutCount.list,
                         AF.list.pre, AF.list.post, GeneFunc)
+
 
   ## ----------
   Neff_Pr_List <- vector (mode = "list", length = 2)

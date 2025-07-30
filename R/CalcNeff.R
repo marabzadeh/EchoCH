@@ -8,7 +8,6 @@
 #' @return  N-effective (bottleneck effect size)
 #' @examples
 #' Neff <- calcNeff(s, mvec, nvec)
-
 calcNeff <- function(s, mvec, nvec){
   #N <- s/(2* sumi(KL(m|n) ) )
   N <- NULL

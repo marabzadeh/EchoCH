@@ -4,11 +4,21 @@
 \alias{WriteFunction}
 \title{WriteFunction}
 \usage{
-WriteFunction(file, path)
+WriteFunction(input.df, path, name)
+}
+\arguments{
+\item{path}{path of the file}
+
+\item{name}{name of the file}
+
+\item{file}{file to be written}
+}
+\value{
+a xlsx file written
 }
 \description{
 Function to write the calculated analysis in a df form in the given path
 }
 \examples{
-WriteFunction (file, path)
+WriteFunction (file, path, name)
 }

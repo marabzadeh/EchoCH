@@ -4,15 +4,17 @@
 \alias{NeffAnalysis}
 \title{NeffAnalysis}
 \usage{
-NeffAnalysis(CH.df, mutNumber_threshold = 1)
+NeffAnalysis(CH.df, mutNumber_threshold = 1, time_threshold = 540)
 }
 \arguments{
 \item{CH.df}{a data.frame with CH mutations with the following columns::
-patient_id, gene, treatment, amino_acid_change,
+patient_id (combination of number and letter), gene, treatment, amino_acid_change,
 depth, vaf, temporal_order, pre/post_treatment,
 days_from_treatment_start_to_sample_collection )}
 
 \item{mutNumber_threshold}{a threshhold on the number of mutations for the individual to be considered in the analysis (default 1)}
+
+\item{time_threshold}{a threshhold on the timepoints (in days)}
 }
 \value{
 Neff_Pr_List Neff_Pr_List[\link{1}]: a dataframe containing Neff results for each patient;
@@ -22,5 +24,5 @@ Neff_Pr_List[\link{2}]: a dataframe containing Pr results for each patient
 Calculate Neff for each patient with the Fitness likelihood for each variant in that patient
 }
 \examples{
-Neff_Pr_List <- NeffAnalysis(CH.df)
+Neff_Pr_List <- NeffAnalysis(CH.df, mutNumber_threshold = 1, time_threshold = 540)
 }
