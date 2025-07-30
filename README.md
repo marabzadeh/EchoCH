@@ -47,11 +47,11 @@ PerGeneGrowth.df <- EchoCH::GrowthAnalysisPerGene(PerVarGrowth.df, time_threshol
 PerTreatmentGrowth.df <- EchoCH::GrowthAnalysisPerTreatment(PerVarGrowth.df, time_threshold = 540)
 ```
 ```
-# Calculate Neff for each patient with the Fitness likelihood for each variant in that patient
+# Calculate Neff for each individual with the Fitness likelihood for each variant in that individual
 Neff_Pr_List <- EchoCH::NeffAnalysis(CH.df, mutNumber_threshold = 1, time_threshold = 540)
 NeffList.df <- Neff_Pr_List[[1]]
 
-#Calculate Fitness likelihood for each variant in each patient
+#Calculate Fitness likelihood for each variant in each individual
 prList.df <- EchoCH::FitnessLikelihoodAnalysis(CH.df, Neff_Pr_List, SigOrderOfMagnitude_threshold = 5, time_threshold = 540)
 prList.df <- prList.df [ prList.df$days == "<=540", ]
 ```
