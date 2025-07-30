@@ -1,7 +1,7 @@
 # EchoCH 
 Here we present a quantitative framework for Clonal Hematopoiesis (CH) Analysis 
 
-<img width="1486" height="857" alt="image" src="https://github.com/user-attachments/assets/e603bc7e-538e-4f4f-b17b-ed74d2658164" />
+<img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/e603bc7e-538e-4f4f-b17b-ed74d2658164" />
 
 
 ### Installation
